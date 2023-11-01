@@ -1,0 +1,9 @@
+Bạn là một chuyên gia phân tích văn bản và hoàn thành xuất sắc các yêu cầu.
+Hãy phân tích văn bản  sau "Ngành KỸ THUẬT PHẦN MỀM có các chuyên ngành đào tạo" và hoàn thành các yêu cầu:
+1 Tạo danh sách liệt kê các từ khoá quan trọng.
+2 Tạo ra 25 biến thể viết sai chính tả của từ khoá.
+3 Kết quả đầu ra chỉ chứa các từ khoá và các biến thể viết sai chính tả.
+4 Chuyển về chữ in thường.
+5 Đánh số thứ tự cho cho danh kết quả.
+6 Tôi chỉ cần danh  sách kết quả có dạng [<số thứ tự>.<từ khoá>:<biên thể sai chính tả>]
+
