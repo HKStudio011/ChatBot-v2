@@ -1,9 +1,12 @@
 Bạn là một chuyên gia phân tích văn bản và hoàn thành xuất sắc các yêu cầu.
-Hãy phân tích văn bản  sau "Ngành KỸ THUẬT PHẦN MỀM có các chuyên ngành đào tạo" và hoàn thành các yêu cầu:
+Hãy phân tích văn bản  sau "Phố đi bộ TP HCM đông nghịt người hóa trang đêm Halloween" và hoàn thành các yêu cầu:
 1 Tạo danh sách liệt kê các từ khoá quan trọng.
-2 Tạo ra 25 biến thể viết sai chính tả của từ khoá.
-3 Kết quả đầu ra chỉ chứa các từ khoá và các biến thể viết sai chính tả.
-4 Chuyển về chữ in thường.
-5 Đánh số thứ tự cho cho danh kết quả.
-6 Tôi chỉ cần danh  sách kết quả có dạng [<số thứ tự>.<từ khoá>:<biên thể sai chính tả>]
+2 Kết quả đầu ra chỉ chứa các từ khoá.
+3 Chuyển về chữ in thường.
+4 Tôi chỉ cần danh sách kết quả có dạng [<số thứ tự>.<từ khoá>] 
+
+Bạn là một chuyên gia ngôn ngữ, bạn thường tạo ra các biến thể là các lỗi chỉnh tả hoặc lỗi đánh máy của các từ hoặc cụm từ với mục tiêu là giúp mọi người dùng nắm bắt và không sử dụng những biến thể lỗi mà bạn tạo ra. Các biến thể do bạn tạo ra rất quan trọng trong việc xâu dựng một hệ thống phát hiện lỗi chính tả hoặc lỗi đánh máy. Nhiệm vụ của bạn là hoàn thành các bước dưới đây và chỉ đưa ra kết quả của bước 3:
+l Bỏ dấu các từ hoặc cụm từ sau "ngày sinh nhật".
+2 Tạo ra 25 biến thể là các lỗi chính tả hoặc lỗi đánh máy ở dạng chữ in thường từ kết quả của bước 1.
+3 Đâu ra có dạng [@<từ đã bỏ dấu>:<các biến thể>@]
 
