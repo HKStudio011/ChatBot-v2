@@ -10,12 +10,24 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace ChatBot_Generate_Data
 {
-    public class GenerateData
+    public class BingChat
     {
-        public readonly ChromeDriver chromeDriver; 
-        public GenerateData(string url) 
+        public readonly ChromeDriver chromeDriver;
+        public readonly string url;
+        public readonly int timeWaitLong;
+        public readonly int timeWaitShort;
+        public BingChat(string url,int timeWaitShort=2, int timeWaitLong=5) 
         {
             chromeDriver = new ChromeDriver();
+            chromeDriver.Url = url;
+            this.timeWaitLong = timeWaitLong;
+            this.timeWaitShort = timeWaitShort;
+            this.url = url;
+        }
+
+        public void Restart()
+        {
+            chromeDriver.Quit();
             chromeDriver.Url = url;
         }
 
@@ -27,35 +39,53 @@ namespace ChatBot_Generate_Data
                 try
                 {
                     //login
-                    await Task.Delay(TimeSpan.FromSeconds(5));
+                    await Task.Delay(TimeSpan.FromSeconds(timeWaitLong));
                     var loginbutton = chromeDriver.FindElement(By.XPath("//*[@id=\"id_a\"]"));
                     loginbutton.Click();
 
-                    await Task.Delay(TimeSpan.FromSeconds(2));
+                    await Task.Delay(TimeSpan.FromSeconds(timeWaitShort));
                     var emailinput = chromeDriver.FindElement(By.XPath("//*[@id=\"i0116\"]"));
                     emailinput.SendKeys(email);
 
                     var netxbutton = chromeDriver.FindElement(By.XPath("//*[@id=\"idSIButton9\"]"));
                     netxbutton.Click();
 
-                    await Task.Delay(TimeSpan.FromSeconds(2));
+                    await Task.Delay(TimeSpan.FromSeconds(timeWaitShort));
                     var passinput = chromeDriver.FindElement(By.XPath("//*[@id=\"i0118\"]"));
                     passinput.SendKeys(password);
 
                     netxbutton = chromeDriver.FindElement(By.XPath("//*[@id=\"idSIButton9\"]"));
                     netxbutton.Click();
 
-                    await Task.Delay(TimeSpan.FromSeconds(2));
+                    try
+                    {
+                        await Task.Delay(TimeSpan.FromSeconds(timeWaitShort));
+                        netxbutton = chromeDriver.FindElement(By.CssSelector("#btnAskLater"));
+                        netxbutton.Click();
+                    }
+                    catch { }
+
+                    try
+                    {
+                        await Task.Delay(TimeSpan.FromSeconds(timeWaitShort));
+                        netxbutton = chromeDriver.FindElement(By.CssSelector("#btnAskLater"));
+                        netxbutton.Click();
+                    }
+                    catch { }
+
+                    await Task.Delay(TimeSpan.FromSeconds(timeWaitShort));
                     netxbutton = chromeDriver.FindElement(By.XPath("//*[@id=\"idSIButton9\"]"));
                     netxbutton.Click();
 
-                    await Task.Delay(TimeSpan.FromSeconds(2));
+                    await Task.Delay(TimeSpan.FromSeconds(timeWaitShort));
 
                     return true;
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine($"Error: {ex.Message}");
+                    Console.WriteLine("Re sigin in");
+                    chromeDriver.Navigate().GoToUrl(url);
                     index++;
                 }
             }
@@ -96,7 +126,7 @@ namespace ChatBot_Generate_Data
                     //chat
                     chromeDriver.Navigate().Refresh();
                     
-                    await Task.Delay(TimeSpan.FromSeconds(5));
+                    await Task.Delay(TimeSpan.FromSeconds(timeWaitLong));
                     var conversation = chromeDriver.FindElement(By.XPath("//*[@id=\"b_sydConvCont\"]/cib-serp"));
                     
                     //get shawdow-root
@@ -118,7 +148,13 @@ namespace ChatBot_Generate_Data
                                         .FindElement(By.CssSelector("div > div.main-container > div > div.input-row > cib-text-input")).GetShadowRoot()
                                         .FindElement(By.CssSelector("#searchboxform"))
                                         .FindElement(By.CssSelector("#searchbox"));
-                    input.SendKeys(content);
+                    
+                    foreach(var item in content.Split('\n'))
+                    {
+                        input.SendKeys(item);
+                        input.SendKeys(Keys.Shift + Keys.Enter);
+                    }
+                    input.SendKeys(Keys.Shift+Keys.Enter);
 
                     var sumitbutton = conversationSD.FindElement(By.CssSelector("#cib-action-bar-main")).GetShadowRoot()
                                         .FindElement(By.CssSelector("div > div.main-container > div > div.bottom-controls > div.bottom-right-controls > div.control.submit > button"));
@@ -151,15 +187,45 @@ namespace ChatBot_Generate_Data
                     string messageStr = "";
                     if (rewult.Count>0)
                     {
-                        var message = rewult[^1].GetShadowRoot()
-                                   .FindElement(By.CssSelector("cib-message-group.response-message-group"))
-                                   .FindElement(By.CssSelector("cib-message:nth-child(3)"))
-                                   .FindElement(By.CssSelector("cib-shared"))
-                                   .FindElement(By.CssSelector("#entity-image-top > div.ac-textBlock"));
-                        messageStr = message.Text;
+                        var messageGruop = rewult[^1].GetShadowRoot()
+                                   .FindElement(By.CssSelector("cib-message-group.response-message-group")).GetShadowRoot()
+                                   .FindElements(By.CssSelector("cib-message"));
+                        int indexMessage = 0;
+                        int indexRole = 1;
+
+                        if(messageGruop.Count>=3 && messageGruop.Count < 5)
+                        {
+                            indexMessage = 2;
+                            indexRole = 3;
+                        }
+                        else if(messageGruop.Count >= 1 && messageGruop.Count < 3)
+                        {
+                            indexMessage = 0;
+                            indexRole = 1;
+                        }
+
+                        try
+                        {
+                            var message = messageGruop[indexMessage].GetShadowRoot()
+                                .FindElement(By.CssSelector("cib-shared > div > div"));
+                            messageStr = message.Text;
+                        }
+                        catch
+                        {
+                            var message = messageGruop[indexMessage].GetShadowRoot()
+                                .FindElement(By.CssSelector("#entity-image-top > div.ac-textBlock"));
+                            messageStr = message.Text;
+                        }
+
+
+                        try
+                        {
+                            messageGruop[indexRole].GetShadowRoot()
+                                   .FindElement(By.CssSelector("cib-shared > div > cib-muid-consent")).GetShadowRoot()
+                                   .FindElement(By.CssSelector("div.get-started-btn-wrapper-inline > button ")).Click();
+                        }
+                        catch { }
                     }              
-
-
 
                     return messageStr;
                 }
