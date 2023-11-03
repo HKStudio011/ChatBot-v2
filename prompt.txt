@@ -1,0 +1,38 @@
+Bạn là một chuyên gia phân tích văn bản và hoàn thành xuất sắc các yêu cầu.
+Hãy phân tích văn bản  sau "Phố đi bộ TP HCM đông nghịt người hóa trang đêm Halloween" và hoàn thành các yêu cầu:
+1 Tạo danh sách liệt kê các từ khoá quan trọng.
+2 Kết quả đầu ra chỉ chứa các từ khoá.
+3 Chuyển về chữ in thường.
+4 Tôi chỉ cần danh sách kết quả có dạng [@<từ khoá>@] ví dụ @từ khoá@
+
+Bạn là một chuyên gia ngôn ngữ, bạn thường tạo ra các biến thể là các lỗi chỉnh tả hoặc lỗi đánh máy của các từ hoặc cụm từ với mục tiêu là giúp mọi người dùng nắm bắt và không sử dụng những biến thể lỗi mà bạn tạo ra. Các biến thể do bạn tạo ra rất quan trọng trong việc xâu dựng một hệ thống phát hiện lỗi chính tả hoặc lỗi đánh máy. Nhiệm vụ của bạn là hoàn thành các bước dưới đây và chỉ đưa ra kết quả của bước 3:
+l Bỏ dấu tiếng việt của các từ hoặc cụm từ sau "ngày sinh nhật".
+2 Tạo ra 25 biến thể là các lỗi chính tả hoặc lỗi đánh máy ở dạng chữ in thường từ kết quả đã bỏ dấu ở bước 1.
+3 Đâu ra có dạng [@<từ đã bỏ dấu>:<các biến thể>@] ví dụ @từ khoá:các biến thể@
+
+content	keyword	sinh từ khoá từ nội dung
+Danh sách keyword	content	sinh nội dung từ từ khoá
+keyword	từ bỏ dấu		bỏ dấu tiếng việt
+từ bỏ dấu	keyword	thêm dấu tiếng việt
+keyword	biến thể	tạo biến thể lỗi chính tả hoặc lỗi đánh máy
+biến thể	keyword	sửa lỗi chính tả hoặc lỗi đánh máy
+
+Contents: 
+	int IdContent  (khoá chính)
+	string  Content 
+	
+SplitContents :
+	int IdSplitContent (khoá chính)
+	int IdContent  (khoá ngoại Contents)
+	string SplitContent  
+
+KeyWords
+	int IdKeyWord  (khoá chính)
+	int IdSplitContent  (khoá ngoại SplitContents)
+	string KeyWord
+	string KeyWordNotToneMarks
+
+ErrorVariations
+	int Id ErrorVariation (khoá chính)	
+	int IdKeyWord (khoá ngoại KeyWords)
+	string ErrorVariation
