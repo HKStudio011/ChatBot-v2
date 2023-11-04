@@ -7,30 +7,8 @@ Console.OutputEncoding = Encoding.UTF8;
 
 MultiTask multiTask = new MultiTask();
 await multiTask.Run();
-Console.WriteLine("!!!Finish!!!");
 Console.ReadKey();
 
-//string email = "";
-//string password = "";
-//string url = "";
-
-
-//BingChat chat = new BingChat(url,5,10);
-//if (!(await chat.SignIn(email, password)))
-//{
-//    Console.ReadKey();
-//    chat.chromeDriver.Quit();
-//    return;
-//}
-
-//string content = """
-//    Bạn là một chuyên gia phân tích văn bản và hoàn thành xuất sắc các yêu cầu.
-//    Hãy phân tích văn bản  sau "Phố đi bộ TP HCM đông nghịt người hóa trang đêm Halloween" và hoàn thành các yêu cầu:
-//    1 Tạo danh sách liệt kê các từ khoá quan trọng.
-//    2 Kết quả đầu ra chỉ chứa các từ khoá.
-//    3 Chuyển về chữ in thường.
-//    4 Tôi chỉ cần danh sách kết quả có dạng [@<từ khoá>@] ví dụ @từ khoá@
-//    """;
 
 //Console.WriteLine(await chat.ChatWithBingAI(content));
 

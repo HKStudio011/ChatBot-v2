@@ -12,26 +12,38 @@ namespace ChatBot_Generate_Data
 {
     public class BingChat
     {
-        public readonly ChromeDriver chromeDriver;
+        public ChromeDriver chromeDriver { get; private set; }
         public readonly string url;
         public readonly int timeWaitLong;
         public readonly int timeWaitShort;
-        public BingChat(string url,int timeWaitShort=2, int timeWaitLong=5) 
+        public string Email { get; set; }
+        public string Password { get; set; }
+        public BingChat(string url, string email, string password,int timeWaitShort=2, int timeWaitLong= 5) 
         {
-            chromeDriver = new ChromeDriver();
-            chromeDriver.Url = url;
+            Email = email;
+            Password = password;
             this.timeWaitLong = timeWaitLong;
             this.timeWaitShort = timeWaitShort;
             this.url = url;
         }
 
-        public void Restart()
+        public void Start()
         {
-            chromeDriver.Quit();
+            chromeDriver = new ChromeDriver();
             chromeDriver.Url = url;
         }
 
-        public async Task<bool> SignIn(string email, string password)
+        public void Restart()
+        {
+            chromeDriver.Quit();
+            Start();
+        }
+
+        public void Close()
+        {
+            chromeDriver.Quit();
+        }
+        public async Task<bool> SignIn()
         {
             int index = 0;
             while (index < 10)
@@ -45,14 +57,14 @@ namespace ChatBot_Generate_Data
 
                     await Task.Delay(TimeSpan.FromSeconds(timeWaitShort));
                     var emailinput = chromeDriver.FindElement(By.XPath("//*[@id=\"i0116\"]"));
-                    emailinput.SendKeys(email);
+                    emailinput.SendKeys(Email);
 
                     var netxbutton = chromeDriver.FindElement(By.XPath("//*[@id=\"idSIButton9\"]"));
                     netxbutton.Click();
 
                     await Task.Delay(TimeSpan.FromSeconds(timeWaitShort));
                     var passinput = chromeDriver.FindElement(By.XPath("//*[@id=\"i0118\"]"));
-                    passinput.SendKeys(password);
+                    passinput.SendKeys(Password);
 
                     netxbutton = chromeDriver.FindElement(By.XPath("//*[@id=\"idSIButton9\"]"));
                     netxbutton.Click();

@@ -33,6 +33,8 @@ KeyWords
 	string KeyWordNotToneMarks
 
 ErrorVariations
-	int Id ErrorVariation (khoá chính)	
+	int IdErrorVariation (khoá chính)	
 	int IdKeyWord (khoá ngoại KeyWords)
 	string ErrorVariation
+
+(?<=@).*(?=@)
