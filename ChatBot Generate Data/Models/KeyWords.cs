@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace ChatBot_Generate_Data.Models
 {
-    public class KeyWords
+    public class Keywords
     {
-        public int IdKeyWord { get; set; }
-        public string KeyWord { get; set; }
-        public string KeyWordNotToneMarks { get; set; }
+        public int IdKeyword { get; set; }
+        public string Keyword { get; set; }
+        public string KeywordNotToneMarks { get; set; }
         public SplitContents SplitContents { get; set; }
         public List<ErrorVariations> ErrorVariations { get; set; }
     }

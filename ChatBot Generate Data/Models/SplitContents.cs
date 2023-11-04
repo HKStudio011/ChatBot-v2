@@ -11,6 +11,6 @@ namespace ChatBot_Generate_Data.Models
         public int IdSplitContent { get; set; }
         public string SplitContent { get; set; }
         public Contents Content { get; set; }
-        public List<KeyWords> KeyWords { get; set; }
+        public List<Keywords> KeyWords { get; set; }
     }
 }
