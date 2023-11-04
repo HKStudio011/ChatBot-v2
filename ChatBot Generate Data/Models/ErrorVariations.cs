@@ -10,6 +10,6 @@ namespace ChatBot_Generate_Data.Models
     {
         public int IdErrorVariation { get; set; }
         public string ErrorVariation { get; set; }
-        public KeyWords KeyWord { get; set; }
+        public Keywords Keyword { get; set; }
     }
 }
