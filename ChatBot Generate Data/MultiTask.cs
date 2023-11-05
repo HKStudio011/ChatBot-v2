@@ -166,12 +166,15 @@ namespace ChatBot_Generate_Data
         private async Task HandleChat(BingChat bingChat, string content, string chatPrompt, string pathTemp)
         {
             int index = 0;
+            int count = 0;
             while (true)
             {
                 try
                 {
-                    if (index >= 10)
+                    if (index >= 5)
                     {
+                        if (count >= 2) break;
+                        count++;
                         bingChat.Restart();
                         await bingChat.SignIn();
                     }
