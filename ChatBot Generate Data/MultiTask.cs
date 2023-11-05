@@ -142,7 +142,10 @@ namespace ChatBot_Generate_Data
             {
                 foreach (var sentence in paragraph.Split(".", StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
                 {
-                    result.Add(sentence);
+                    if(sentence.Length>=6 && sentence.Contains(" "))
+                    {
+                        result.Add(sentence);
+                    }                  
                 }
             }
             return result;
