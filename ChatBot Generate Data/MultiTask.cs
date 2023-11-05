@@ -336,7 +336,11 @@ namespace ChatBot_Generate_Data
                         using var stream = new FileStream(file, FileMode.Open);
                         var task = JsonSerializer.DeserializeAsync<Respomse>(stream);
                         task.AsTask().Wait();
-                        responeses.Add(task.Result);
+                        var temp = task.Result;
+                        if(temp != null)
+                        {
+                            responeses.Add(temp);
+                        }
                     });
                 }
                 catch (Exception ex)
@@ -375,13 +379,13 @@ namespace ChatBot_Generate_Data
         private async Task GenerateErrorVariation(List<string> splitKeywords)
         {
             ConcurrentBag<Task> tasks = new ConcurrentBag<Task>();
-            ConcurrentBag<string> result = new ConcurrentBag<string>();
             await Console.Out.WriteLineAsync("Generating error variation...");
             List<string> character = new List<string> { "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z" };
             var random = new Random();
 
             splitKeywords.AsParallel().ForAll(keyword =>
             {
+                ConcurrentBag<string> result = new ConcurrentBag<string>();
                 Respomse respomse = new Respomse(keyword);
                 keyword = RemoveUnicode(keyword).ToLower();
                 result.Add(keyword);
