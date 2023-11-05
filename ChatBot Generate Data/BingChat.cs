@@ -117,6 +117,7 @@ namespace ChatBot_Generate_Data
                                         .FindElement(By.CssSelector("iframe")).GetShadowRoot()
                                         .FindElement(By.CssSelector("#cf-chl-widget-ox1rb")).GetShadowRoot()
                                         .FindElement(By.CssSelector("#challenge-stage > div > label > input[type=checkbox]"));
+                    Console.WriteLine("Verify...");
                     checkbox.Click();
                     return false;
                 }
@@ -144,12 +145,6 @@ namespace ChatBot_Generate_Data
                     //get shawdow-root
                     var conversationSD = conversation.GetShadowRoot();
 
-                    if (!Verify(conversationSD))
-                    {
-                        index++;
-                        continue;
-                    }
-
                     var seletmode = conversationSD.FindElement(By.CssSelector("#cib-conversation-main")).GetShadowRoot()
                                         .FindElement(By.CssSelector("#cib-chat-main > cib-welcome-container")).GetShadowRoot()
                                         .FindElement(By.CssSelector("div.controls > cib-tone-selector")).GetShadowRoot()
@@ -172,7 +167,7 @@ namespace ChatBot_Generate_Data
                                         .FindElement(By.CssSelector("div > div.main-container > div > div.bottom-controls > div.bottom-right-controls > div.control.submit > button"));
                     sumitbutton.Click();
                     
-                    await Task.Delay(TimeSpan.FromSeconds(10));
+                    await Task.Delay(TimeSpan.FromSeconds(timeWaitLong*2));
 
                     if (!Verify(conversationSD))
                     {
@@ -235,6 +230,7 @@ namespace ChatBot_Generate_Data
                             messageGruop[indexRole].GetShadowRoot()
                                    .FindElement(By.CssSelector("cib-shared > div > cib-muid-consent")).GetShadowRoot()
                                    .FindElement(By.CssSelector("div.get-started-btn-wrapper-inline > button ")).Click();
+                            await Task.Delay(TimeSpan.FromSeconds(timeWaitShort));
                         }
                         catch { }
                     }              
