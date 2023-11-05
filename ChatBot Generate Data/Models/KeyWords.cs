@@ -12,6 +12,5 @@ namespace ChatBot_Generate_Data.Models
         public string Keyword { get; set; }
         public string KeywordNotToneMarks { get; set; }
         public SplitContents SplitContents { get; set; }
-        public List<ErrorVariations> ErrorVariations { get; set; }
     }
 }
