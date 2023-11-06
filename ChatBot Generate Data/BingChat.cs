@@ -127,7 +127,8 @@ namespace ChatBot_Generate_Data
 
                     Console.WriteLine("Verify...");
                     checkbox.Click();
-                    await Task.Delay(TimeSpan.FromSeconds(timeWaitShort));
+
+                    await Task.Delay(TimeSpan.FromSeconds(timeWaitLong));
                     return false;
                 }
                 catch
@@ -180,8 +181,7 @@ namespace ChatBot_Generate_Data
 
                     if (!(await Verify(conversationSD)))
                     {
-                        index++;
-                        continue;
+                        ;
                     }
 
                     var stopResponding = conversationSD.FindElement(By.CssSelector("#cib-action-bar-main")).GetShadowRoot()
