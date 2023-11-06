@@ -30,6 +30,9 @@ namespace ChatBot_Generate_Data
         List<Account> accounts;
         Config config;
 
+        List<BingChat> bingChats;
+        private readonly object _lock = new();
+
         class Respomse
         {
             public Respomse(string content)
@@ -48,6 +51,8 @@ namespace ChatBot_Generate_Data
             public string Label { get; set; }
             public string Task { get; set; }
         }
+
+
         public MultiTask()
         {
             path = "Temp";
@@ -165,21 +170,31 @@ namespace ChatBot_Generate_Data
                 break;
             }
         }
+        private async Task<bool> SwitchSigin(BingChat bingChat)
+        {
+            return await CheckSignIn(bingChat);
+        }
 
         private async Task HandleChat(BingChat bingChat, string content, string chatPrompt, string pathTemp)
         {
             int index = 0;
-            int count = 0;
             while (true)
             {
                 try
                 {
-                    if (index >= 5)
+                    if (index >= 1)
                     {
-                        if (count >= 2) break;
-                        count++;
                         bingChat.Restart();
-                        await bingChat.SignIn();
+                        if (index >= 2)
+                        {
+                            break;
+                        }
+                        if (!(await SwitchSigin(bingChat)))
+                        {
+                            await RunSplit();
+                            EndProgram();
+                            break;
+                        }
                     }
                     string result = await bingChat.ChatWithBingAI(chatPrompt);
                     result = result.Replace(",", "\n");
@@ -230,29 +245,30 @@ namespace ChatBot_Generate_Data
 
         }
 
-        private async Task<bool> CheckSignIn(BingChat bingchat, int index)
+        private async Task<bool> CheckSignIn(BingChat bingchat)
         {
             while (true)
             {
-                // kiem tra lai so luong accout neu >= NumberTasks thi doi accout   
-                if (accounts.Count >= config.NumberTasks)
+                int index = 0;
+                lock(_lock)
                 {
+                    // kiem tra lai so luong accout neu >= NumberTasks thi doi accout   
+                    if (!(accounts.Count >= 1))
+                    {
+                        return false;
+
+                    }
                     bingchat.Email = accounts[index].Email;
                     bingchat.Password = accounts[index].Password;
+
+                    accounts.RemoveAt(index);
                 }
-                else
-                {
-                    return false;
-                }
+
 
                 //kiem tra sign in
                 if (!await bingchat.SignIn())
                 {
                     await Console.Out.WriteLineAsync($"Warning: Account {accounts[index].Email} cannot sign in");
-
-                    //remove accout cannot sign in
-                    accounts.RemoveAt(index);
-
                 }
                 else
                 {
@@ -267,7 +283,7 @@ namespace ChatBot_Generate_Data
             {
                 var bingchat = new BingChat(config.Url, accounts[i].Email, accounts[i].Password, 5, 10);
                 bingchat.Start();
-                var task = CheckSignIn(bingchat, i);
+                var task = CheckSignIn(bingchat);
                 task.Wait();
                 if (task.Result)
                 {
@@ -577,43 +593,8 @@ namespace ChatBot_Generate_Data
             Console.WriteLine($"Writing data in {pathResult}: Done");
         }
 
-        public async Task Run()
+        private async Task RunSplit()
         {
-            if (!ReadAccount()) return;
-            await ReadConfig();
-            await Console.Out.WriteLineAsync($"Info : Url = {config.Url}");
-            await Console.Out.WriteLineAsync($"Info : Account = {accounts.Count}");
-            if (config.NumberTasks > accounts.Count)
-            {
-                await Console.Out.WriteLineAsync("Warning : Set Number Tasks = Account because NumberTasks > Account");
-                config.NumberTasks = accounts.Count;
-            }
-            await Console.Out.WriteLineAsync($"Info : Number tasks = {config.NumberTasks}");
-            await Console.Out.WriteLineAsync($"Info : Number error variation = {config.NumberErrorVariations}");
-
-            if (!ReadContent()) return;
-            //create folder temp
-            ManageTemp();
-
-            //generate data
-
-            Console.WriteLine("Starting selenium...");
-            var bingChats = await InitializationBingChat();
-            Console.WriteLine("Starting selenium: Done");
-
-
-            var spiltContents = await SplitContents();
-            if (spiltContents.Count != 0)
-            {
-                await GenerateKeyword(spiltContents, bingChats);
-                spiltContents.Clear();
-            }
-            else
-            {
-                Console.WriteLine("Error: Spilt Contents is null");
-                EndProgram();
-            }
-
             Console.WriteLine("Closing selenium...");
             CloseBingChat(bingChats);
             Console.WriteLine("Closing selenium: Done");
@@ -638,6 +619,45 @@ namespace ChatBot_Generate_Data
             Console.WriteLine("Cleaning...");
             ManageTemp();
             Console.WriteLine("!!!Finish!!!");
+        }
+        public async Task Run()
+        {
+            if (!ReadAccount()) return;
+            await ReadConfig();
+            await Console.Out.WriteLineAsync($"Info : Url = {config.Url}");
+            await Console.Out.WriteLineAsync($"Info : Account = {accounts.Count}");
+            if (config.NumberTasks > accounts.Count)
+            {
+                await Console.Out.WriteLineAsync("Warning : Set Number Tasks = Account because NumberTasks > Account");
+                config.NumberTasks = accounts.Count;
+            }
+            await Console.Out.WriteLineAsync($"Info : Number tasks = {config.NumberTasks}");
+            await Console.Out.WriteLineAsync($"Info : Number error variation = {config.NumberErrorVariations}");
+
+            if (!ReadContent()) return;
+            //create folder temp
+            ManageTemp();
+
+            //generate data
+            Console.WriteLine("Starting selenium...");
+            bingChats = await InitializationBingChat();
+            Console.WriteLine("Starting selenium: Done");
+
+
+            var spiltContents = await SplitContents();
+            if (spiltContents.Count != 0)
+            {
+                await GenerateKeyword(spiltContents, bingChats);
+                spiltContents.Clear();
+            }
+            else
+            {
+                Console.WriteLine("Error: Spilt Contents is null");
+                EndProgram();
+            }
+
+            // chia nhanh run neu co loi chat thi goi truc tiep de hoan thanh
+            await RunSplit();
         }
     }
 }

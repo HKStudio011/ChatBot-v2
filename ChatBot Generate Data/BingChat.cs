@@ -18,10 +18,12 @@ namespace ChatBot_Generate_Data
         public readonly int timeWaitShort;
         public string Email { get; set; }
         public string Password { get; set; }
-        public BingChat(string url, string email, string password,int timeWaitShort=2, int timeWaitLong= 5) 
+        public int TurnAgin { get; set; }
+        public BingChat(string url, string email, string password,int timeWaitShort=2, int timeWaitLong= 5,int turnAgin=3) 
         {
             Email = email;
             Password = password;
+            TurnAgin = turnAgin;
             this.timeWaitLong = timeWaitLong;
             this.timeWaitShort = timeWaitShort;
             this.url = url;
@@ -46,7 +48,7 @@ namespace ChatBot_Generate_Data
         public async Task<bool> SignIn()
         {
             int index = 0;
-            while (index < 10)
+            while (index < TurnAgin)
             {
                 try
                 {
@@ -105,20 +107,27 @@ namespace ChatBot_Generate_Data
             return false;
         }
 
-        private bool Verify(ISearchContext conversationSD)
+        private async Task<bool> Verify(ISearchContext conversationSD)
         {
             while(true)
             {
                 try
                 {
-                    var checkbox = conversationSD.FindElement(By.CssSelector("#cib-conversation-main")).GetShadowRoot()
+                    var iframe = conversationSD.FindElement(By.CssSelector("#cib-conversation-main")).GetShadowRoot()
                                         .FindElements(By.CssSelector("#cib-chat-main > cib-chat-turn"))[^1].GetShadowRoot()
                                         .FindElement(By.CssSelector("cib-message-group.response-message-group")).GetShadowRoot()
-                                        .FindElement(By.CssSelector("iframe")).GetShadowRoot()
-                                        .FindElement(By.CssSelector("#cf-chl-widget-ox1rb")).GetShadowRoot()
-                                        .FindElement(By.CssSelector("#challenge-stage > div > label > input[type=checkbox]"));
+                                        .FindElement(By.CssSelector("cib-message:nth-child(1)")).GetShadowRoot()
+                                        .FindElement(By.CssSelector("iframe"));
+                    iframe.Click();
+                    var iframe2 = chromeDriver.SwitchTo().Frame(iframe)
+                                        .FindElement(By.CssSelector("#cf-chl-widget-gywrv"));
+                    iframe2.Click();
+
+                    var checkbox = iframe2.FindElement(By.CssSelector("#challenge-stage > div > label > input[type=checkbox]"));
+
                     Console.WriteLine("Verify...");
                     checkbox.Click();
+                    await Task.Delay(TimeSpan.FromSeconds(timeWaitShort));
                     return false;
                 }
                 catch
@@ -132,7 +141,7 @@ namespace ChatBot_Generate_Data
         {
 
             int index = 0;
-            while(index<10)
+            while(index< TurnAgin)
             {
                 try
                 {
@@ -169,7 +178,7 @@ namespace ChatBot_Generate_Data
                     
                     await Task.Delay(TimeSpan.FromSeconds(timeWaitLong*2));
 
-                    if (!Verify(conversationSD))
+                    if (!(await Verify(conversationSD)))
                     {
                         index++;
                         continue;
