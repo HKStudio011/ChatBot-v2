@@ -514,23 +514,20 @@ namespace ChatBot_Generate_Data
             //Danh sách keyword content sinh nội dung từ khoá
             data1.AsParallel().ForAll(item =>
             {
-                item.Result.AsParallel().ForAll(keyword =>
-                {
-                    Result result = new Result()
-                    {
-                        Input = item.Content,
-                        Label = keyword,
-                        Task = "Sinh từ khoá từ nội dung: "
-                    };
-
-                    results.Add(result);
-                });
-
                 Result result = new Result()
+                {
+                    Input = item.Content,
+                    Label = string.Join(",", item.Result),
+                    Task = "Sinh từ khoá từ nội dung: "
+                };
+
+                results.Add(result);
+
+                result = new Result()
                 {
                     Input = string.Join(",",item.Result),
                     Label = item.Content,
-                    Task = "Sinh nội dung từ khoá: "
+                    Task = "Sinh nội dung từ từ khoá: "
                 };
 
                 results.Add(result);
