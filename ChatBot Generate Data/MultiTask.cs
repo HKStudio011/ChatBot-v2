@@ -172,6 +172,7 @@ namespace ChatBot_Generate_Data
         }
         private async Task<bool> SwitchSigin(BingChat bingChat)
         {
+            await Console.Out.WriteLineAsync("Switch accout");
             return await CheckSignIn(bingChat);
         }
 
