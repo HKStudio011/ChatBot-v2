@@ -147,7 +147,7 @@ namespace ChatBot_Generate_Data
             {
                 foreach (var sentence in paragraph.Split(".", StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
                 {
-                    if(sentence.Length>=6 && sentence.Contains(" "))
+                    if(sentence.Length>=20 && sentence.Contains(" "))
                     {
                         result.Add(sentence);
                     }                  
@@ -185,11 +185,11 @@ namespace ChatBot_Generate_Data
                 {
                     if (index >= 1)
                     {
-                        bingChat.Restart();
                         if (index >= 2)
                         {
                             break;
                         }
+                        bingChat.Restart();
                         if (!(await SwitchSigin(bingChat)))
                         {
                             await RunSplit();
@@ -205,7 +205,11 @@ namespace ChatBot_Generate_Data
                         Respomse respomse = new Respomse(content);
                         foreach (Match item in temp)
                         {
-                            respomse.Result.Add(item.Groups[1].Value);
+                            var str = item.Groups[1].Value;
+                            if(str!=string.Empty)
+                            {
+                                respomse.Result.Add(str);
+                            }
                         }
 
                         await WriteTempFile(respomse, pathKeyword);
