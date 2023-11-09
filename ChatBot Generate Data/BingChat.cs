@@ -18,12 +18,12 @@ namespace ChatBot_Generate_Data
         public readonly int timeWaitShort;
         public string Email { get; set; }
         public string Password { get; set; }
-        public int TurnAgin { get; set; }
-        public BingChat(string url, string email, string password,int timeWaitShort=2, int timeWaitLong= 5,int turnAgin=3) 
+        public int TurnAgain { get; set; }
+        public BingChat(string url, string email, string password,int timeWaitShort=2, int timeWaitLong= 5,int turnAgain=3) 
         {
             Email = email;
             Password = password;
-            TurnAgin = turnAgin;
+            TurnAgain = turnAgain;
             this.timeWaitLong = timeWaitLong;
             this.timeWaitShort = timeWaitShort;
             this.url = url;
@@ -48,7 +48,7 @@ namespace ChatBot_Generate_Data
         public async Task<bool> SignIn()
         {
             int index = 0;
-            while (index < TurnAgin)
+            while (index < TurnAgain)
             {
                 try
                 {
@@ -142,7 +142,7 @@ namespace ChatBot_Generate_Data
         {
 
             int index = 0;
-            while(index< TurnAgin)
+            while(index< TurnAgain)
             {
                 try
                 {

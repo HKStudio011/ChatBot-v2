@@ -83,7 +83,11 @@ namespace ChatBot_Generate_Data
                 config = new Config()
                 {
                     NumberTasks = accounts.Count,
-                    Url = @"https://www.bing.com/search?q=Bing+AI&showconv=1"
+                    Url = @"https://www.bing.com/search?q=Bing+AI&showconv=1",
+                    NumberErrorVariations = 2,
+                    TurnAgain = 3,
+                    TimeWaitShort = 5,
+                    TimeWaitLong = 10,
                 };
                 using var stream = new FileStream("Data/config.json", FileMode.Create);
                 await JsonSerializer.SerializeAsync<Config>(stream, config);
@@ -286,7 +290,7 @@ namespace ChatBot_Generate_Data
             ConcurrentBag<BingChat> bingChats = new ConcurrentBag<BingChat>();
             Parallel.For(0, config.NumberTasks ,i=>
             {
-                var bingchat = new BingChat(config.Url, accounts[i].Email, accounts[i].Password, 5, 10);
+                var bingchat = new BingChat(config.Url, accounts[i].Email, accounts[i].Password, config.TimeWaitShort, config.TimeWaitLong,config.TurnAgain);
                 bingchat.Start();
                 var task = CheckSignIn(bingchat);
                 task.Wait();

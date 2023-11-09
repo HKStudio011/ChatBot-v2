@@ -10,6 +10,9 @@ namespace ChatBot_Generate_Data.Models
     {
         public int NumberTasks { get; set; }
         public int NumberErrorVariations { get; set; }
+        public int TurnAgain {get; set; }
+        public int TimeWaitLong { get; set; }
+        public int TimeWaitShort { get; set; }
         public string Url { get; set; }
     }
 }
