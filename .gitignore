@@ -3,6 +3,10 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
+# custom
+checkpoints/
+Model/
+
 # User-specific files
 *.rsuser
 *.suo
@@ -516,8 +520,7 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 
-# checkpoint
-checkpoints/
+
 
 # PyCharm
 #  JetBrains specific template is maintained in a separate JetBrains.gitignore that can
