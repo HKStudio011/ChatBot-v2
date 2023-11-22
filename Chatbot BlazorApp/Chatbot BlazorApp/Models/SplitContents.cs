@@ -1,15 +1,28 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ChatBot_Generate_Data.Models
+namespace Chatbot_BlazorApp.Models
 {
     public class SplitContents
     {
-        public int IdSplitContent { get; set; }
+        [Key]
+        public int SplitContentID { get; set; }
+        [StringLength(500, MinimumLength = 2, ErrorMessage = "{0} phải dài từ {2} đến {1} kí tự.")]
+        [Column(TypeName = "nvarchar")]
+        [Required(ErrorMessage = "{0} phải nhập.")]
+        [DisplayName("Nội dung đã tách")]
         public string SplitContent { get; set; }
+        public int ContentID { get; set; }
+        [ForeignKey("ContentID")]
+        [Required(ErrorMessage = "{0} phải nhập.")]
         public Contents Content { get; set; }
         public List<Keywords> KeyWords { get; set; }
     }
