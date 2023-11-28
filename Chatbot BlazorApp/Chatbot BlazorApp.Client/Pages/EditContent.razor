@@ -1,0 +1,77 @@
+﻿@page "/edit/{Id:int}"
+@rendermode InteractiveAuto
+@attribute [StreamRendering]
+
+@inject IHandleContentService _handleContent
+@inject NavigationManager _navigation
+
+<h3>Create Content</h3>
+
+@if ((contents == null && IsNull== true))
+{
+    <label>Not found content</label>
+}
+else if (contents != null)
+{
+    if(IsPosting)
+    {
+        <label>Loading...</label>
+    }
+    else
+    {
+        <EditForm Model="@contents" OnValidSubmit="@Submit" FormName="Content">
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" />
+            <div class="form-group">
+                <InputTextArea class="form-control" @bind-Value="contents!.Content" />
+            </div>
+            <p></p>
+            <div class="form-group">
+                <button class="btn btn-primary" type="submit">Submit</button>
+            </div>
+        </EditForm>
+    }
+
+}
+else
+{
+    <label>Loading...</label>
+}
+
+
+@code {
+    [SupplyParameterFromForm]
+    public Contents contents { get; set; }
+
+    [Parameter]
+    public int Id { get; set; }
+
+    private bool IsNull = false;
+
+    private bool IsPosting = false;
+
+    protected override  void OnInitialized()
+    {
+        contents = _handleContent.GetContentById(Id);
+        if (contents == null)
+        {
+            IsNull = true;
+        }
+        else
+        {
+            IsNull = false;
+        }
+    }
+
+    public async Task Submit()
+    {
+
+        IsPosting = true;
+        StateHasChanged();
+        await _handleContent.UpdateContentsAsync(contents);
+        IsPosting = false;
+        StateHasChanged();
+        _navigation.NavigateTo("/data");
+
+    }
+}

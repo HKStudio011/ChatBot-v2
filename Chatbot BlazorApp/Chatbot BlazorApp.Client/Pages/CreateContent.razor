@@ -1,0 +1,52 @@
+﻿@page "/create"
+@rendermode InteractiveAuto
+@attribute [StreamRendering]
+
+@inject IHandleContentService _handleContent
+@inject NavigationManager _navigation
+
+<h3>Create Content</h3>
+
+@if(!IsPosting)
+{
+    <EditForm Model="@contents" OnValidSubmit="@Submit" FormName="Content">
+        <DataAnnotationsValidator />
+        <ValidationSummary class="text-danger" />
+        <div class="form-group">
+            <InputTextArea class="form-control" @bind-Value="contents!.Content" />
+        </div>
+        <p></p>
+        <div class="form-group">
+            <button class="btn btn-primary" type="submit">Submit</button>
+        </div>
+    </EditForm>
+
+}
+else
+{
+    <label>Loading...</label>
+}
+
+@code {
+    [SupplyParameterFromForm]
+    public Contents contents { get; set; }
+
+    private bool IsPosting = false;
+
+    protected override void OnInitialized()
+    {
+        contents??= new();
+    }
+
+    public async Task Submit()
+    {
+        IsPosting = true;
+        StateHasChanged();
+        await _handleContent.CreateContentsAsync(contents);
+        IsPosting = false;
+        StateHasChanged();
+        _navigation.NavigateTo("/data");
+
+
+    }
+}

@@ -5,25 +5,26 @@ using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static System.Net.Mime.MediaTypeNames;
 
-namespace Chatbot_Model
+namespace Chatbot_BlazorApp_Share.Services
 {
     public class ChatbotModel
     {
         private Py.GILState gil;
         public string PathModel { get; set; }
         public int NumberThread { get; private set; }
-
+        public string Version { get; private set; }
         public dynamic Model { get; private set; }
         private int count = 0;
         private readonly object lock_in = new object();
         private readonly object lock_out = new object();
-        public ChatbotModel(string PathModel = "../Model/mt5-base-fireturning-three-task",int NumberThread = 4)
+        public ChatbotModel(string PathModel = "../Model/mt5-base-fireturning-three-task", int NumberThread = 4, string Version = "python311.dll")
         {
             this.PathModel = PathModel;
             // so luong luong chat cung luc
             this.NumberThread = NumberThread;
+            // dll python
+            this.Version = Version;
         }
 
         public void ClosePythonEndine()
@@ -39,8 +40,7 @@ namespace Chatbot_Model
 
         public async Task Init()
         {
-            string dll_name = File.ReadAllText("Python/version.txt");
-            Environment.SetEnvironmentVariable("PYTHONNET_PYDLL", dll_name, EnvironmentVariableTarget.Process);
+            Environment.SetEnvironmentVariable("PYTHONNET_PYDLL", Version, EnvironmentVariableTarget.Process);
 
             await Console.Out.WriteLineAsync("Start python engine...");
             PythonEngine.Initialize();
@@ -65,7 +65,7 @@ namespace Chatbot_Model
         {
             lock (lock_in)
             {
-                while(count >= NumberThread) 
+                while (count >= NumberThread)
                 {
                     var task = Task.Delay(1000);
                     task.Wait();
@@ -78,11 +78,11 @@ namespace Chatbot_Model
                 result = Model.GenerateKeyword(request);
                 result = "\n" + Model.GenerateKeywords(request);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw ex;
             }
-            finally 
+            finally
             {
                 lock (lock_out)
                 {

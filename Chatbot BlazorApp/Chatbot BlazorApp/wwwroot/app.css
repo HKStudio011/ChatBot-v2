@@ -2,6 +2,10 @@ html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
+body {
+    background: #E3F2FD;
+}
+
 a, .btn-link {
     color: #006bb7;
 }
@@ -49,3 +53,4 @@ h1:focus {
 .darker-border-checkbox.form-check-input {
     border-color: #929292;
 }
+

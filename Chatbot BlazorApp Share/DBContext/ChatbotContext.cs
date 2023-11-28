@@ -1,6 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Chatbot_BlazorApp_Share.Entity;
+using Microsoft.EntityFrameworkCore;
 
-namespace Chatbot_BlazorApp.Models
+namespace Chatbot_BlazorApp_Share.DBContext
 {
     public class ChatbotContext : DbContext
     {
