@@ -8,19 +8,19 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Chatbot_BlazorApp.Models
+namespace Chatbot_BlazorApp_Share.Entity
 {
     [Index(nameof(Keyword), nameof(KeywordNotToneMarks))]
     public class Keywords
     {
         [Key]
         public int KeywordID { get; set; }
-        [StringLength(50, MinimumLength = 2, ErrorMessage = "{0} phải dài từ {2} đến {1} kí tự.")]
+        [StringLength(100, ErrorMessage = "{0} phải dài từ {2} đến {1} kí tự.")]
         [Column(TypeName = "nvarchar")]
         [Required(ErrorMessage = "{0} phải nhập.")]
         [DisplayName("Từ khoá")]
         public string Keyword { get; set; }
-        [StringLength(50, MinimumLength = 2, ErrorMessage = "{0} phải dài từ {2} đến {1} kí tự.")]
+        [StringLength(100, ErrorMessage = "{0} phải dài từ {2} đến {1} kí tự.")]
         [Column(TypeName = "nvarchar")]
         [Required(ErrorMessage = "{0} phải nhập.")]
         [DisplayName("Từ khoá không dấu")]

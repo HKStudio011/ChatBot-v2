@@ -1,0 +1,21 @@
+﻿@page "/data"
+@rendermode InteractiveAuto
+
+<div>
+    <h3>Data</h3>
+</div>
+
+<div>
+    <NavLink class="btn btn-primary" href="/create">Create</NavLink>
+    <NavigationButtonComponent Class="btn btn-primary" Path="/upload" Name="Upload file"></NavigationButtonComponent>
+    <NavigationButtonComponent Class="btn btn-primary" Path="/download" Name="Download file example"></NavigationButtonComponent>
+
+</div>
+
+
+<hr />
+<ListContent></ListContent>
+
+@code {
+
+}

@@ -1,0 +1,37 @@
+﻿@page "/download"
+@inject NavigationManager _navigation
+
+@rendermode InteractiveServer
+
+@using System.IO
+@inject IJSRuntime JS
+
+<label>Looding...</label>
+
+<script>
+    window.triggerFileDownload = (fileName, url) => {
+        const anchorElement = document.createElement('a');
+        anchorElement.href = url;
+        anchorElement.download = fileName ?? '';
+        anchorElement.click();
+        anchorElement.remove();
+    }
+</script>
+
+@code {
+
+    private async Task DownloadFileFromURL()
+    {
+        var fileName = "example.xlsx";
+        var fileURL = Path.Combine(_navigation.BaseUri, "Download", fileName);
+
+        await JS.InvokeVoidAsync("triggerFileDownload", fileName, fileURL);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await DownloadFileFromURL();
+        _navigation.NavigateTo("/data");
+    }
+
+}

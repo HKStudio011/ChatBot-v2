@@ -1,0 +1,23 @@
+﻿@rendermode InteractiveAuto
+
+@inject NavigationManager _navigation
+<button class=@Class @onclick=Navigation>@Name</button>
+
+@code {
+    [Parameter]
+    public string Name { get; set; }
+
+    [Parameter]
+    public string Class { get; set; } = "";
+
+    [Parameter]
+    public int? Id { get; set; }
+
+    [Parameter]
+    public string Path { get; set; }
+
+    public void Navigation()
+    {
+        _navigation.NavigateTo($"{Path}/{(Id==null?string.Empty:Id)}");
+    }
+}
