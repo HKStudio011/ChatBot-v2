@@ -9,7 +9,7 @@ using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Chatbot_BlazorApp.Models
+namespace Chatbot_BlazorApp_Share.Entity
 {
     public class SplitContents
     {

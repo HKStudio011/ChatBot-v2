@@ -1,0 +1,104 @@
+﻿@page "/"
+@rendermode InteractiveAuto
+@inject IHandleChatService _handleChatService
+@attribute [StreamRendering]
+
+
+@using System.ComponentModel;
+@using System.ComponentModel.DataAnnotations;
+@using System.ComponentModel.DataAnnotations.Schema;
+
+<div class="chatbot">
+    <header>
+        <h2>Chatbot</h2>
+        <span class="close-btn material-symbols-outlined">close</span>
+    </header>
+    <ul class="chatbox">
+        @foreach(var chat in ChatMessages)
+        {
+            if (!chat.IsUser)
+            {
+                <li class="chat incoming">
+                    <span>
+                        <svg style="color: white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M160 352h192V160H160V352zM448 176h48C504.8 176 512 168.8 512 160s-7.162-16-16-16H448V128c0-35.35-28.65-64-64-64h-16V16C368 7.164 360.8 0 352 0c-8.836 0-16 7.164-16 16V64h-64V16C272 7.164 264.8 0 256 0C247.2 0 240 7.164 240 16V64h-64V16C176 7.164 168.8 0 160 0C151.2 0 144 7.164 144 16V64H128C92.65 64 64 92.65 64 128v16H16C7.164 144 0 151.2 0 160s7.164 16 16 16H64v64H16C7.164 240 0 247.2 0 256s7.164 16 16 16H64v64H16C7.164 336 0 343.2 0 352s7.164 16 16 16H64V384c0 35.35 28.65 64 64 64h16v48C144 504.8 151.2 512 160 512c8.838 0 16-7.164 16-16V448h64v48c0 8.836 7.164 16 16 16c8.838 0 16-7.164 16-16V448h64v48c0 8.836 7.164 16 16 16c8.838 0 16-7.164 16-16V448H384c35.35 0 64-28.65 64-64v-16h48c8.838 0 16-7.164 16-16s-7.162-16-16-16H448v-64h48C504.8 272 512 264.8 512 256s-7.162-16-16-16H448V176zM384 368c0 8.836-7.162 16-16 16h-224C135.2 384 128 376.8 128 368v-224C128 135.2 135.2 128 144 128h224C376.8 128 384 135.2 384 144V368z" fill="white"></path></svg>
+                    </span>
+                    <p>@chat.Message</p>
+                </li>
+            }
+            else
+            {
+                <li class="chat outgoing">
+                    <p>@chat.Message</p>
+                </li>
+            }
+        }
+
+    </ul>
+        <EditForm class="chat-input" Model="@Message" OnValidSubmit="@Submit" FormName="Chat">
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" />
+        <InputTextArea placeholder="Enter a message..." @bind-Value="Message"></InputTextArea>
+            <button class="btn btn-primary" type="submit">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-send" viewBox="0 0 16 16">
+                    <path d="M15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.75.75 0 0 1-1.329.124l-3.178-4.995L.643 7.184a.75.75 0 0 1 .124-1.33L15.314.037a.5.5 0 0 1 .54.11ZM6.636 10.07l2.761 4.338L14.13 2.576zm6.787-8.201L1.591 6.602l4.339 2.76 7.494-7.493Z" />
+                </svg>
+            </button>
+    </EditForm>
+</div>
+
+@if (Warning!=string.Empty)
+{
+    <ul class="text-danger">
+        <li>
+            <p>@Warning</p>
+        </li>
+    </ul>
+}
+
+@code {
+
+    class ChatMessage
+    {
+        public string Message { get; set; }
+        public bool IsUser { get; set; }
+    }
+
+    List<ChatMessage> ChatMessages = new();
+
+    [SupplyParameterFromForm]
+    [StringLength(200,MinimumLength = 1)]
+    public string Message { get; set; } = "";
+
+    public string Warning { get; set; } = "";
+
+
+
+    public bool IsButtonDisabled { get; set; } = true;
+    public bool IsSend { get; set; } = false;
+
+    public async void Submit()
+    {
+        if (Message.Length > 1 && IsSend != true)
+        {
+            Warning = "";
+            IsButtonDisabled = true;
+            IsSend = true;
+            ChatMessages.Add(new ChatMessage() { Message = Message, IsUser = true });
+            ChatMessages.Add(new ChatMessage() { Message = "..", IsUser = false });
+            StateHasChanged();
+            await Task.Delay(TimeSpan.FromSeconds(2));
+            string chat = await _handleChatService.GenerateChat(Message);
+            ChatMessages.Remove(ChatMessages[^1]);
+            ChatMessages.Add(new ChatMessage() { Message = chat, IsUser = false });
+            Message = "";
+            IsButtonDisabled = false;
+            IsSend = false;
+            StateHasChanged();
+        }
+        else
+        {
+            Warning = "Error: Chat lenght too short.";
+        }
+
+    }
+}

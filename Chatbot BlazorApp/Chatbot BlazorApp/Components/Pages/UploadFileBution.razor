@@ -1,0 +1,116 @@
+﻿@page "/upload"
+@inject NavigationManager _navigation
+@inject IHandleContentService _handleContent
+
+@rendermode InteractiveServer
+
+@inject ILogger<string> Logger
+@inject IHostEnvironment Environment
+
+<h3>Upload Files</h3>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="form-group">
+            <label>Max file size:</label>
+            <input type="number" @bind-value="maxFileSize" class="form-control" disabled />
+        </div>
+
+        <div class="form-group">
+            <label>Max allowed files:</label>
+            <input type="number" @bind-value="(maxAllowedFiles)" class="form-control" disabled />
+        </div>
+
+        <div class="form-group">
+            <label>Upload up to @maxAllowedFiles of up to @maxFileSize MB:</label>
+            <InputFile accept="xlsx" OnChange="@LoadFiles" title="Upload file excel" class="form-control-file" />
+        </div>
+
+        @if (isLoading)
+        {
+            <div class="alert alert-info">Uploading...</div>
+        }
+        else
+        {
+            <ul class="list-group">
+                @foreach (var file in loadedFiles)
+                {
+                    <li class="list-group-item">
+                        <ul>
+                            <li>Name: @file.Name</li>
+                            <li>Last modified: @file.LastModified.ToString()</li>
+                            <li>Size (bytes): @file.Size</li>
+                            <li>Content type: @file.ContentType</li>
+                        </ul>
+                    </li>
+                }
+            </ul>
+        }
+
+
+        @if (!string.IsNullOrEmpty(message))
+        {
+            <ul class="text-danger">
+                <li>
+                    <p>
+                        @message
+                    </p>
+                </li>
+            </ul>
+        }
+
+    </div>
+</div>
+
+@code {
+    private List<IBrowserFile> loadedFiles = new();
+    private long maxFileSize = 5;
+    private int maxAllowedFiles = 1;
+    private bool isLoading;
+    private string? message;
+
+    private async Task LoadFiles(InputFileChangeEventArgs e)
+    {
+        isLoading = true;
+        loadedFiles.Clear();
+        message = string.Empty;
+
+        if (e.FileCount > maxAllowedFiles)
+        {
+            message = $"Try again with no more than {maxAllowedFiles} files.";
+        }
+        else
+        {
+            foreach (var file in e.GetMultipleFiles(maxAllowedFiles))
+            {
+                var trustedFileNameForFileStorage = Path.GetRandomFileName() + ".xlsx";
+                var path = Path.Combine("wwwroot", "Upload",
+                        trustedFileNameForFileStorage);
+
+                await using FileStream fs = new FileStream(path, FileMode.Create);
+                try
+                {
+                    await file.OpenReadStream((maxFileSize * (1024 * 1024))).CopyToAsync(fs);
+                    loadedFiles.Add(file);
+                    //server silde only
+                    await ((HandleContentService)_handleContent).CreateContentsFromFileAsync(path);
+                }
+                catch (Exception ex)
+                {
+                    Logger.LogError("File: {Filename} Error: {Error}",
+                        file.Name, ex.Message);
+                    message = "Upload error(s). See logs for details.";
+                }
+                finally
+                {
+                    File.Delete(path);
+                    fs.Close();
+                }
+
+            }
+        }
+
+        isLoading = false;
+        StateHasChanged();
+    }
+}

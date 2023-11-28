@@ -1,0 +1,53 @@
+﻿@rendermode InteractiveAuto
+@attribute [StreamRendering]
+
+@inject IHandleContentService _handleContent
+
+<div>
+    @if (contents == null)
+    {
+        <label>Loading..</label>
+    }
+    else if (contents.Count > 0)
+    {
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Content</th>
+                    <th scope="col">Task</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < contents.Count; i++)
+                {
+                    <tr>
+                        <td >@(i + 1)</td>
+                        <td>@contents[i].Content</td>
+                        <td>
+                            <NavigationButtonComponent Class="btn btn-primary" Id="@contents[i].ContentID" Path="/edit" Name="Edit"></NavigationButtonComponent>
+                            <NavigationButtonComponent Class="btn btn-danger" Id="@contents[i].ContentID" Path="/delete" Name="Delete"></NavigationButtonComponent>
+                        </td>
+
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <label>Not found content</label>
+    }
+
+</div>
+
+
+
+@code {
+    private List<Contents> contents = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        contents = await _handleContent.GetAllContentsAsync();
+    }
+}

@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Chatbot_BlazorApp.Models
+namespace Chatbot_BlazorApp_Share.Entity
 {
     [Index(nameof(Keyword), nameof(KeywordNotToneMarks))]
     public class Keywords
