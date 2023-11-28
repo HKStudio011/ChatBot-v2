@@ -24,6 +24,6 @@ namespace Chatbot_BlazorApp_Share.Entity
         [ForeignKey("ContentID")]
         [Required(ErrorMessage = "{0} phải nhập.")]
         public Contents Content { get; set; }
-        public List<Keywords> KeyWords { get; set; }
+        public List<Keywords>? KeyWords { get; set; }
     }
 }

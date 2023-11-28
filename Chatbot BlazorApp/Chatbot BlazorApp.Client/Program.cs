@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
-builder.Services.AddSingleton(httpclient => new HttpClient()
+builder.Services.AddTransient<HttpClient>(httpclient => new HttpClient()
 {
     BaseAddress = new Uri(builder.Configuration.GetSection("API url").Value)
 });

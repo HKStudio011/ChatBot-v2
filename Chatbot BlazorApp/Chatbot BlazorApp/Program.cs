@@ -1,11 +1,11 @@
-//using Chatbot_BlazorApp.Client.Pages;
+using Chatbot_BlazorApp.Client.Pages;
 using Chatbot_BlazorApp.Components;
 using Chatbot_BlazorApp_Share.Services;
 using Chatbot_BlazorApp_Share.DBContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
-using Chatbot_BlazorApp.Client.Pages;
+using Chatbot_BlazorApp.Controllers;
 
 var builder = WebApplication.CreateBuilder(args);
 

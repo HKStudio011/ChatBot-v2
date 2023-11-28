@@ -1,8 +1,6 @@
 ﻿@page "/"
-@rendermode InteractiveAuto
+@rendermode InteractiveWebAssembly
 @inject IHandleChatService _handleChatService
-@attribute [StreamRendering]
-
 
 @using System.ComponentModel;
 @using System.ComponentModel.DataAnnotations;
@@ -86,7 +84,6 @@
             ChatMessages.Add(new ChatMessage() { Message = Message, IsUser = true });
             ChatMessages.Add(new ChatMessage() { Message = "..", IsUser = false });
             StateHasChanged();
-            await Task.Delay(TimeSpan.FromSeconds(2));
             string chat = await _handleChatService.GenerateChat(Message);
             ChatMessages.Remove(ChatMessages[^1]);
             ChatMessages.Add(new ChatMessage() { Message = chat, IsUser = false });
