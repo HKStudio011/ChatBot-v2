@@ -14,7 +14,7 @@ namespace Chatbot_BlazorApp_Share.Entity
     {
         [Key]
         public int ContentID { get; set; }
-        [StringLength(5000,MinimumLength =2,ErrorMessage ="{0} phải dài từ {2} đến {1} kí tự.")]
+        [StringLength(10000,MinimumLength =2,ErrorMessage ="{0} phải dài từ {2} đến {1} kí tự.")]
         [Column(TypeName = "nvarchar(max)")]
         [Required(ErrorMessage ="{0} phải nhập.")]
         [DisplayName("Nội dung")]

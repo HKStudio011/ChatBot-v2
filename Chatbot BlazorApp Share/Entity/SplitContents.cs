@@ -15,7 +15,7 @@ namespace Chatbot_BlazorApp_Share.Entity
     {
         [Key]
         public int SplitContentID { get; set; }
-        [StringLength(500, MinimumLength = 2, ErrorMessage = "{0} phải dài từ {2} đến {1} kí tự.")]
+        [StringLength(1000, MinimumLength = 2, ErrorMessage = "{0} phải dài từ {2} đến {1} kí tự.")]
         [Column(TypeName = "nvarchar")]
         [Required(ErrorMessage = "{0} phải nhập.")]
         [DisplayName("Nội dung đã tách")]

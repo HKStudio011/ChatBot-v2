@@ -92,6 +92,8 @@
                 {
                     await file.OpenReadStream((maxFileSize * (1024 * 1024))).CopyToAsync(fs);
                     loadedFiles.Add(file);
+                    StateHasChanged();
+                    await Task.Delay(TimeSpan.FromSeconds(2));
                     //server silde only
                     await ((HandleContentService)_handleContent).CreateContentsFromFileAsync(path);
                 }
@@ -112,5 +114,6 @@
 
         isLoading = false;
         StateHasChanged();
+        _navigation.NavigateTo("/data");
     }
 }

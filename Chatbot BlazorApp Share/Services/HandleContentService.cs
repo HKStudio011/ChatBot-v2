@@ -146,6 +146,10 @@ namespace Chatbot_BlazorApp_Share.Services
 
         private async Task AddContent(Contents contents,bool isUpdate = false)
         {
+            if (contents.Content.Length > 10000 || contents.Content.Length < 2)
+            {
+                return;
+            }
             var result = HandelContent(contents).ToList();
             ConcurrentBag<SplitContents> splitContents = result[0] as ConcurrentBag<SplitContents>;
             ConcurrentBag<List<Keywords>> list_Keywords = result[1] as ConcurrentBag<List<Keywords>>;
@@ -225,7 +229,7 @@ namespace Chatbot_BlazorApp_Share.Services
                                     .Split(",", StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
             foreach (var item in split_keyword) 
             {
-                if(item.Length> 50)
+                if(item.Length > 100)
                 {
                     continue;
                 }
@@ -271,7 +275,14 @@ namespace Chatbot_BlazorApp_Share.Services
                         i--;
                     }
                 }
-                split_sentence.AsParallel().ForAll(s => sentence.Add(s));
+                split_sentence.AsParallel().ForAll(s =>
+                {
+                    if (!(s.Length > 1000 || s.Length < 2))
+                    {
+                        return;
+                    }
+                    sentence.Add(s);
+                });
             });
 
             return sentence.ToList();
