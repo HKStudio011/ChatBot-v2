@@ -42,10 +42,21 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="wwwroot\Chat.css" />
+    <None Include="wwwroot\Chat.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
+    <Content Update="wwwroot\Download\example.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Properties\launchSettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Python\Model.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
