@@ -19,6 +19,6 @@ namespace Chatbot_BlazorApp_Share.Entity
         [Required(ErrorMessage ="{0} phải nhập.")]
         [DisplayName("Nội dung")]
         public string Content { get; set; }
-        public List<SplitContents> SplitContents { get; set; }
+        public List<SplitContents>? SplitContents { get; set; }
     }
 }
