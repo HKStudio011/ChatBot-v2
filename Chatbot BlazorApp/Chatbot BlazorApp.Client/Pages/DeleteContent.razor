@@ -1,6 +1,5 @@
 ﻿@page "/delete/{Id:int}"
-@rendermode InteractiveAuto
-@attribute [StreamRendering]
+@rendermode InteractiveWebAssembly
 
 @inject IHandleContentService _handleContent
 @inject NavigationManager _navigation
@@ -13,9 +12,12 @@
     [Parameter]
     public int Id { get; set; }
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        await _handleContent.DeleteContentsAsync(Id);
-        _navigation.NavigateTo("/data");
+        if (firstRender)
+        {
+            await _handleContent.DeleteContentsAsync(Id);
+            _navigation.NavigateTo("/data");
+        }
     }
 }

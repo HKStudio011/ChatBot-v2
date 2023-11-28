@@ -1,11 +1,10 @@
 ﻿@page "/edit/{Id:int}"
-@rendermode InteractiveAuto
-@attribute [StreamRendering]
+@rendermode InteractiveWebAssembly
 
 @inject IHandleContentService _handleContent
 @inject NavigationManager _navigation
 
-<h3>Create Content</h3>
+<h3>Edit Content</h3>
 
 @if ((contents == null && IsNull== true))
 {
@@ -65,13 +64,14 @@ else
 
     public async Task Submit()
     {
-
-        IsPosting = true;
-        StateHasChanged();
-        await _handleContent.UpdateContentsAsync(contents);
-        IsPosting = false;
-        StateHasChanged();
-        _navigation.NavigateTo("/data");
-
+        if (IsPosting == false)
+        {
+            IsPosting = true;
+            StateHasChanged();
+            await _handleContent.UpdateContentsAsync(contents);
+            IsPosting = false;
+            StateHasChanged();
+            _navigation.NavigateTo("/data");
+        }
     }
 }

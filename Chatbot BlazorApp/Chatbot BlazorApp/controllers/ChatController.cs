@@ -1,9 +1,10 @@
-﻿using Chatbot_BlazorApp_Share.Services;
+﻿using Chatbot_BlazorApp_Share.Entity;
+using Chatbot_BlazorApp_Share.Services;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
-namespace Chatbot_BlazorApp.controllers
+namespace Chatbot_BlazorApp.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -16,11 +17,13 @@ namespace Chatbot_BlazorApp.controllers
             _handleChatService = handleChatService;
         }
 
+        
+
         // POST api/<ChatController>
-        [HttpPost("{message}")]
-        public async Task<ActionResult<string>> PostChat(string message)
+        [HttpPost]
+        public async Task<ActionResult<string>> PostChat(ChatMessage chatMessage)
         {
-            string chat = await _handleChatService.GenerateChat(message);
+            string chat = await _handleChatService.GenerateChat(chatMessage.Message);
 
             if( !string.IsNullOrEmpty(chat)) 
             {

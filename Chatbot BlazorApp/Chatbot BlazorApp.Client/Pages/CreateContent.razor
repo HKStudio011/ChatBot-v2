@@ -1,6 +1,5 @@
 ﻿@page "/create"
-@rendermode InteractiveAuto
-@attribute [StreamRendering]
+@rendermode InteractiveWebAssembly
 
 @inject IHandleContentService _handleContent
 @inject NavigationManager _navigation
@@ -40,13 +39,14 @@ else
 
     public async Task Submit()
     {
-        IsPosting = true;
-        StateHasChanged();
-        await _handleContent.CreateContentsAsync(contents);
-        IsPosting = false;
-        StateHasChanged();
-        _navigation.NavigateTo("/data");
-
-
+        if(IsPosting == false)
+        {
+            IsPosting = true;
+            StateHasChanged();
+            await _handleContent.CreateContentsAsync(contents);
+            IsPosting = false;
+            StateHasChanged();
+            _navigation.NavigateTo("/data");
+        }
     }
 }

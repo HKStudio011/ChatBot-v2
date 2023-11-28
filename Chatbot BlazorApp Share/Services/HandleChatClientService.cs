@@ -19,7 +19,8 @@ namespace Chatbot_BlazorApp_Share.Services
 
         public async Task<string> GenerateChat(string message)
         {
-           var result = await _httpClient.PostAsJsonAsync<string>("/api/chat", message);
+           ChatMessage chatMessage = new ChatMessage() { Message = message };
+           var result = await _httpClient.PostAsJsonAsync("/api/Chat", chatMessage);
            if (result.IsSuccessStatusCode) 
            {
                 return await result.Content.ReadAsStringAsync();
