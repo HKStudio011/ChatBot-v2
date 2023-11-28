@@ -38,6 +38,12 @@ namespace Chatbot_BlazorApp_Share.Services
             }
             return SelectContent(keywords);
         }
+        class KeywordMarked
+        {
+            public string Keyword { get; set; }
+            public int point { get; set; }
+            public ConcurrentBag<Contents> ListContent { get; set; } = new();
+        }
 
         private string SelectContent(List<string> keywords)
         {
@@ -45,48 +51,67 @@ namespace Chatbot_BlazorApp_Share.Services
             {
                 return "Xin lỗi, không có thông tin liên quan đến câu hỏi của bạn =((";
             }
-
-            ConcurrentBag<KeyValuePair<Contents, int>> contentAndPoint = new ConcurrentBag<KeyValuePair<Contents, int>>();
-            ConcurrentBag<string> keywordMarked = new ConcurrentBag<string>();
+            ConcurrentBag<KeywordMarked> keywordMarkeds = new ConcurrentBag<KeywordMarked>();
 
             var temp = _chatbotContext.Keywords.ToList();
             var temp1 = _chatbotContext.SplitContents.ToList();
             var temp2 = _chatbotContext.Contents.ToList();
 
+
+
             //mask keyword chat vs keyword trong database
             keywords.AsParallel().ForAll(k =>
             {
-                
+
                 int poin = k.Split(" ", StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries).Length;
+                poin *= poin;
                 var search = temp.AsParallel().Where(i => i.KeywordNotToneMarks == k).ToList();
                 if (search.Count != 0)
                 {
-                    keywordMarked.Add(k);
+                    KeywordMarked keywordMarked = new();
+                    keywordMarked.Keyword = k;
+                    keywordMarked.point = poin;
                     var content = (from kw in temp.AsParallel()
                                    join slc in temp1.AsParallel()
                                       on kw.SplitContentID equals slc.SplitContentID into gr
                                    from kwslc in gr.AsParallel()
                                    join c in temp2.AsParallel()
                                       on kwslc.ContentID equals c.ContentID
-                                   select c).ToList();
+                                   where kw.KeywordNotToneMarks == k
+                                   select c).Distinct().ToList();
                     if (content.Count != 0)
                     {
                         content.AsParallel().ForAll(c =>
                         {
-                            contentAndPoint.Add(new KeyValuePair<Contents, int>(c, poin));
+                            keywordMarked.ListContent.Add(c);
+
                         });
                     }
+                    keywordMarkeds.Add(keywordMarked);
                 }
 
             });
 
+            //giai phong ram
+            temp = null;
+            temp1 = null;
+            temp2 = null;
+
 
             //nhom cac content giong nhau
+            var contentAndPoint = new ConcurrentBag<KeyValuePair<Contents,int>>();
+            keywordMarkeds.AsParallel().ForAll(k =>
+            {
+                k.ListContent.AsParallel().ForAll(item =>
+                {
+                    contentAndPoint.Add(new KeyValuePair<Contents, int>(item,k.point));
+                });
+            });
+
+                            
             var grContent = contentAndPoint.AsParallel()
-                            .GroupBy(x => x.Key).Select(x => x.ToList()).ToList();
-
+                                .GroupBy(x=> x.Key.ContentID).Select(x => x.ToList()).ToList();
             contentAndPoint.Clear();
-
             //tinh tong diem cua cac content
             grContent.AsParallel().ForAll(l_keypair =>
             {
@@ -107,14 +132,7 @@ namespace Chatbot_BlazorApp_Share.Services
             });
 
             //tim max point
-            int max = 0;
-            foreach (var kv in contentAndPoint)
-            {
-                if (kv.Value > max)
-                {
-                    max = kv.Value;
-                }
-            }
+            int max = contentAndPoint.AsParallel().OrderByDescending(k => k.Value).FirstOrDefault().Value;
 
             if (max <= 1)
             {
@@ -122,6 +140,8 @@ namespace Chatbot_BlazorApp_Share.Services
             }
 
             var result = contentAndPoint.AsParallel().Where(i => i.Value == max).ToList();
+
+
             if (result.Count > 3)
             {
                 return "Xin lỗi, không thể cung cấp một câu trả lời chính xác vì có quá nhiều thông tin liên quan đến câu hỏi của bạn =((";

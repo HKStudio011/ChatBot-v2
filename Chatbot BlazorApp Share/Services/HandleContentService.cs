@@ -277,7 +277,7 @@ namespace Chatbot_BlazorApp_Share.Services
                 }
                 split_sentence.AsParallel().ForAll(s =>
                 {
-                    if (!(s.Length > 1000 || s.Length < 2))
+                    if (s.Length > 1000 || s.Length < 2)
                     {
                         return;
                     }
