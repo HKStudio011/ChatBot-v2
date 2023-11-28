@@ -18,4 +18,10 @@
     <ProjectReference Include="..\..\Chatbot BlazorApp Share\Chatbot BlazorApp Share.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="wwwroot\appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>
